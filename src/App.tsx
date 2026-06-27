@@ -233,38 +233,46 @@ export default function App() {
 
   // Seed tasks for new registered users dynamically to keep their deck beautiful and active
   useEffect(() => {
-    if (currentUser && currentUser.id !== 'guest') {
-      const existingUserTasks = tasks.filter(t => t.userId === currentUser.id);
+    const activeId = currentUser ? currentUser.id : 'guest';
+    setTasks(prev => {
+      const existingUserTasks = prev.filter(t => t.userId === activeId);
       if (existingUserTasks.length === 0) {
         const personalizedSeeds = SEED_TASKS.map((t, idx) => ({
           ...t,
-          id: `task_seed_${currentUser.id}_${idx}`,
-          userId: currentUser.id,
-          profile: currentUser.profile,
+          id: `task_seed_${activeId}_${idx}`,
+          userId: activeId,
+          profile: currentUser?.profile || 'professional',
           dueDate: new Date(Date.now() + (idx === 0 ? 1000 * 60 * 60 * 4 : idx === 1 ? 1000 * 60 * 60 * 12 : 1000 * 60 * 60 * 2)).toISOString().slice(0, 16)
         }));
-        setTasks(prev => [...prev, ...personalizedSeeds]);
-        setSelectedTaskId(personalizedSeeds[0]?.id || '');
-      } else {
-        const currentActiveTaskExists = existingUserTasks.some(t => t.id === selectedTaskId);
-        if (!currentActiveTaskExists && existingUserTasks.length > 0) {
-          setSelectedTaskId(existingUserTasks[0].id);
-        }
+        setTimeout(() => setSelectedTaskId(personalizedSeeds[0]?.id || ''), 0);
+        return [...prev, ...personalizedSeeds];
+      }
+      return prev;
+    });
+  }, [currentUser]);
+
+  // Keep selected task selection valid when user/tasks change
+  useEffect(() => {
+    const activeId = currentUser ? currentUser.id : 'guest';
+    const currentTasks = tasks.filter(t => t.userId === activeId);
+    if (currentTasks.length > 0) {
+      const exists = currentTasks.some(t => t.id === selectedTaskId);
+      if (!exists) {
+        setSelectedTaskId(currentTasks[0].id);
       }
     } else {
-      const guestTasks = tasks.filter(t => t.userId === 'guest');
-      const currentActiveTaskExists = guestTasks.some(t => t.id === selectedTaskId);
-      if (!currentActiveTaskExists && guestTasks.length > 0) {
-        setSelectedTaskId(guestTasks[0].id);
-      }
+      setSelectedTaskId('');
     }
-  }, [currentUser, tasks.length]);
+  }, [currentUser, tasks, selectedTaskId]);
 
   // Seed welcome messages for each user ID dynamically
   useEffect(() => {
     if (activeUserId) {
-      const existingChat = chatMessages.filter(m => m.userId === activeUserId);
-      if (existingChat.length === 0) {
+      setChatMessages(prev => {
+        const hasWelcome = prev.some(m => m.id === `welcome_${activeUserId}` || m.userId === activeUserId);
+        if (hasWelcome) {
+          return prev;
+        }
         const welcomeMsg: ChatMessage = {
           id: `welcome_${activeUserId}`,
           userId: activeUserId,
@@ -272,15 +280,10 @@ export default function App() {
           text: `Welcome ${currentUser ? currentUser.name : 'Guest'}! I am 'The Last-Minute Life Saver'. I've loaded your ${profile} profile. Tell me, what's currently stressing you out or keeping you up? Let's tackle it immediately.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
-        setChatMessages(prev => {
-          if (prev.some(m => m.id === welcomeMsg.id)) {
-            return prev;
-          }
-          return [...prev, welcomeMsg];
-        });
-      }
+        return [...prev, welcomeMsg];
+      });
     }
-  }, [activeUserId, chatMessages, currentUser, profile]);
+  }, [activeUserId, currentUser, profile]);
 
   // --- REGISTRATION & LOGIN ACTIONS ---
   const handleSignUp = (e: React.FormEvent) => {
