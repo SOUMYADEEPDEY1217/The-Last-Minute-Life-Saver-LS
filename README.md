@@ -1,6 +1,6 @@
-# Project Description: The Last-Minute Life Saver 🚀
+# Project Description: Clutch AI 🚀
 
-Welcome to **The Last-Minute Life Saver**, an ultra-proactive, AI-powered productivity companion specifically engineered for students, professionals, and entrepreneurs battling procrastination, looming deadlines, and high-stakes crunch times.
+Welcome to **Clutch AI**, an ultra-proactive, AI-powered productivity companion specifically engineered for students, professionals, and entrepreneurs battling procrastination, looming deadlines, and high-stakes crunch times.
 
 ---
 
@@ -15,17 +15,17 @@ For users facing overwhelming deadlines, this passive approach fails because:
 3. **Cognitive Load & Stress:** The pressure of a countdown timer causes panic, reducing focus and making standard planning systems feel like an extra chore rather than a solution.
 
 ### Our Mission
-**The Last-Minute Life Saver** transforms the relationship between the procrastinator and their workload. Instead of asking the user to plan, **the AI takes the first step**. It ranks tasks by dynamic urgency, splits big projects into 15-to-30-minute high-focus sprints, drafts the actual content (email drafts, outlines, code boilerplates) to destroy writer's block, and acts as a firm, empathetic deadline coach.
+**Clutch AI** transforms the relationship between the procrastinator and their workload. Instead of asking the user to plan, **the AI takes the first step**. It ranks tasks by dynamic urgency, splits big projects into 15-to-30-minute high-focus sprints, drafts the actual content (email drafts, outlines, code boilerplates) to destroy writer's block, and acts as a firm, empathetic deadline coach.
 
 ---
 
 ## 2. Solution Overview
 
-**The Last-Minute Life Saver** is a full-stack, AI-first application that functions as an active productivity co-pilot:
+**Clutch AI** is a full-stack, AI-first application that functions as an active productivity co-pilot:
 
 ```
 +------------------------------------------------------------+
-|                THE LAST-MINUTE LIFE SAVER                  |
+|                          CLUTCH AI                         |
 |                                                            |
 |   +-------------------+    +---------------------------+   |
 |   | 1. Dynamic Task   |    | 2. Sprint Breakdown       |   |
@@ -36,16 +36,12 @@ For users facing overwhelming deadlines, this passive approach fails because:
 |   +-------------------+    +---------------------------+   |
 |   | 3. Proactive Asset|    | 4. AI Deadline Coach      |   |
 |   |    Generator      |    |    (Empathetic & Firm)    |   |
-|   +---------+---------+    +-------------+-------------+   |
-|             |                            |                 |
-|             v                            v                 |
-|   +----------------------------------------------------+   |
-|   | 5. Google Drive & Docs Export (Real-time Cloud)     |   |
-|   +----------------------------------------------------+   |
+|   +-------------------+    +---------------------------+   |
+|                                                            |
 +------------------------------------------------------------+
 ```
 
-By connecting the client dashboard directly to a customized Express server powered by **Gemini 3.5 Flash** and **Google Workspace Integration**, we offer a seamless, high-velocity loop of **Prioritize ➔ Break Down ➔ Draft Asset ➔ Execute ➔ Save to Cloud**.
+By connecting the client dashboard directly to a customized Express server powered by **Gemini 3.5 Flash**, we offer a seamless, high-velocity loop of **Prioritize ➔ Break Down ➔ Draft Asset ➔ Execute**.
 
 ---
 
@@ -53,7 +49,7 @@ By connecting the client dashboard directly to a customized Express server power
 
 ### A. Core Task Resolution Workflow (End-to-End)
 
-The diagram below details how a user interacts with the system, from experiencing deadline anxiety to saving completed plans in Google Workspace.
+The diagram below details how a user interacts with the system, from experiencing deadline anxiety to generating sprint plans.
 
 ```mermaid
 sequenceDiagram
@@ -62,7 +58,6 @@ sequenceDiagram
     participant Client as React SPA (Vite)
     participant Server as Node/Express Backend
     participant Gemini as Gemini 3.5 Flash API
-    participant Workspace as Google Drive & Docs API
 
     User->>Client: 1. Inputs tasks & selects Profile (Student/Pro/Entrep)
     Client->>Server: POST /api/prioritize (send task deck)
@@ -81,13 +76,6 @@ sequenceDiagram
     Server->>Gemini: Drafts high-quality complete boilerplate markdown
     Gemini-->>Server: Returns markdown text (no placeholders!)
     Client-->>User: Displays markdown editor & immediately copyable text
-
-    User->>Client: 4. Authenticates with Google & clicks "Export Project Description"
-    Client->>Workspace: POST /v1/documents (Create Document)
-    Workspace-->>Client: Returns Document ID
-    Client->>Workspace: POST /v1/documents/{id}:batchUpdate (Insert content)
-    Workspace-->>Client: Returns live Google Doc Link
-    Client-->>User: Displays real-time link (Successfully Saved to Google Drive!)
 ```
 
 ### B. User State & Active Profiles
@@ -108,7 +96,7 @@ The companion adapts to the selected user persona, customizing the AI voice and 
    - **Code Boilerplates:** Working TypeScript/JavaScript or scripts to bypass setup friction.
    - **Talking Points:** Meeting speaking notes and pitch bullets.
 4. **Firm, Conversational Deadline Coach:** An AI companion panel that refuses to let you slide. It supports chat-based interactions that are always direct, empathetic to stress, but strictly biased towards the *Next Best Action*.
-5. **Real Google Workspace Integration:** Rather than maintaining offline state, users can sign in via Google OAuth and instantly export their task lists, breakdown plans, or generated assets into their personal **Google Docs** in real-time, retrieving a shareable document link.
+5. **Robust Local Session Persistence:** Safely saves task boards, active sprints, and chats to standard browser local storage, ensuring continuous local state recovery without complex account requirements.
 
 ---
 
@@ -134,6 +122,3 @@ The companion adapts to the selected user persona, customizing the AI voice and 
   - Powers **微型任务拆解 (Micro-scheduler)** to turn complex multi-day projects into structured sprint cards.
   - Powers **极速首期资源编写 (Proactive Asset Writer)** to bypass writer's block by drafting complete paragraphs.
   - Powers **监督式伴侣聊天 (Empathetic Deadline Coach)**.
-- **Google OAuth & Firebase Auth:** Provides secure Google Single Sign-On and extracts the OAuth tokens required to write to Google Workspace.
-- **Google Docs API:** Facilitates programmatic creation and insertion of detailed task descriptions and sprint breakdowns into Google Docs.
-- **Google Drive API (`https://www.googleapis.com/auth/drive.file`):** Grants the application permission to write, list, and link documents created with the application inside the user's secure Drive storage.
