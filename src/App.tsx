@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   AlertTriangle, 
   Clock, 
@@ -206,7 +206,18 @@ export default function App() {
   });
   const [chatInput, setChatInput] = useState('');
   const [isChatSending, setIsChatSending] = useState(false);
-  const userChatMessages = chatMessages.filter(m => m.userId === activeUserId);
+  const userChatMessages = useMemo(() => {
+    const filtered = chatMessages.filter(m => m.userId === activeUserId);
+    const unique: ChatMessage[] = [];
+    const seen = new Set<string>();
+    for (const msg of filtered) {
+      if (msg && msg.id && !seen.has(msg.id)) {
+        seen.add(msg.id);
+        unique.push(msg);
+      }
+    }
+    return unique;
+  }, [chatMessages, activeUserId]);
 
   // Ref for chat auto-scroll
   const chatBottomRef = useRef<HTMLDivElement>(null);
